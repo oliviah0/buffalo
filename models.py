@@ -8,6 +8,23 @@ from flask_sqlalchemy import SQLAlchemy
 bcrypt = Bcrypt()
 db = SQLAlchemy()
 
+class LikedMessage(db.Model):
+    """Connection of a follower <-> followee."""
+
+    __tablename__ = 'liked_messages'
+
+    message_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete="cascade"),
+        primary_key=True,
+    )
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete="cascade"),
+        primary_key=True,
+    )
+
 
 class Follows(db.Model):
     """Connection of a follower <-> followee."""

@@ -358,3 +358,6 @@ def add_header(req):
     req.headers["Expires"] = "0"
     req.headers['Cache-Control'] = 'public, max-age=0'
     return req
+
+
+# if a user likes a message, then that means that initially, the record does not exist in LikedMessages table, so we must add record to table.
