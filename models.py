@@ -50,7 +50,7 @@ class User(db.Model):
 
     __tablename__ = 'users'
 
-    message_likes = db.relationship("LikedMessage", backref="users", cascade="all,delete")
+    liked_messages = db.relationship("LikedMessage", backref="users", cascade="all,delete")
 
     id = db.Column(
         db.Integer,
@@ -168,7 +168,7 @@ class Message(db.Model):
 
     __tablename__ = 'messages'
 
-    message_likes = db.relationship("LikedMessage", backref="messages", cascade="all,delete")
+    liked_messages = db.relationship("LikedMessage", backref="messages", cascade="all,delete")
 
 
     id = db.Column(

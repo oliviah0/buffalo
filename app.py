@@ -240,7 +240,6 @@ def profile():
         else:
             flash("Not authenticated")
             return redirect('/')
-            # Is this 401?
 
 
     return render_template("users/edit.html", form=form)
@@ -260,6 +259,12 @@ def delete_user():
     db.session.commit()
 
     return redirect("/signup")
+
+@app.route('/users/<int:user_id>/likes')
+def like_count(user_id):
+    user = User.query.get_or_404(user_id)
+    return render_template('users/likes.html', user=user)
+
 
 
 ##############################################################################
@@ -311,6 +316,22 @@ def messages_destroy(message_id):
     return redirect(f"/users/{g.user.id}")
 
 
+@app.route('/messages/<int:msg_id>/like/add', methods=["POST"])
+def add_like(msg_id):
+    """ If user clicks button check if message exists in liked message table. if a exists, remove from db. Else add to db"""
+
+    message_exists = LikedMessage.query.filter_by(message_id=msg_id, user_id=g.user.id).first()
+    
+    if message_exists:
+        db.session.delete(message_exists)
+    
+    else:
+        new_messsage = LikedMessage(message_id=msg_id, user_id=g.user.id)
+        db.session.add(new_messsage)
+    
+    db.session.commit()
+    return redirect('/')
+
 ##############################################################################
 # Homepage and error pages
 
@@ -322,17 +343,16 @@ def homepage():
     - anon users: no messages
     - logged in: 100 most recent messages of followees
     """
-
-    
-    likes = LikedMessage.query.filter_by(user_id=g.user.id).all()
-    []
+ 
 
     if g.user:
 
+        likes = LikedMessage.query.filter_by(user_id=g.user.id).all()
+
         # grabs all users' ids the user is following
         user_following = [user.id for user in g.user.following]
-        liked_messages = [msg.message_id for msg in g.user.message_likes]
-        # import pdb; pdb.set_trace()
+        liked_messages = [msg.message_id for msg in g.user.liked_messages]
+       
         # grabs all messages for user and user following
         messages = (Message
                     .query
@@ -367,26 +387,7 @@ def add_header(req):
 
 
 
-@app.route('/messages/<int:msg_id>/like/add', methods=["POST"])
-def add_like(msg_id):
-    """ If user clicks button check if message exists in liked message table. if a exists, remove from db. Else add to db"""
-
-    message_exists = LikedMessage.query.filter_by(message_id=msg_id, user_id=g.user.id).first()
-    if message_exists:
-        db.session.delete(message_exists)
-    else:
-        new_messsage = LikedMessage(message_id=msg_id, user_id=g.user.id)
-        db.session.add(new_messsage)
-    # import pdb; pdb.set_trace()
-    db.session.commit()
-    return redirect('/')
-
-@app.route('/users/<int:user_id>/likes')
-def like_count(user_id):
-    user = User.query.get_or_404(user_id)
-    return render_template('users/likes.html', user=user)
 
 
 
-   
-#  Adding
+
