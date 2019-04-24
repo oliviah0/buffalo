@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy import or_
 
 from forms import UserAddForm, LoginForm, MessageForm, UserUpdateForm
-from models import db, connect_db, User, Message
+from models import db, connect_db, User, Message, LikedMessage
 
 CURR_USER_KEY = "curr_user"
 
@@ -102,7 +102,7 @@ def login():
 
         if user:
             do_login(user)
-            flash(f"Hello, {user.username}!", "success")
+            flash(f"Hello, {user.username}! success")
             return redirect("/")
 
         flash("Invalid credentials.", 'danger')
@@ -323,11 +323,16 @@ def homepage():
     - logged in: 100 most recent messages of followees
     """
 
+    
+    likes = LikedMessage.query.filter_by(user_id=g.user.id).all()
+    []
+
     if g.user:
 
         # grabs all users' ids the user is following
         user_following = [user.id for user in g.user.following]
-    
+        liked_messages = [msg.message_id for msg in g.user.message_likes]
+        # import pdb; pdb.set_trace()
         # grabs all messages for user and user following
         messages = (Message
                     .query
@@ -336,7 +341,8 @@ def homepage():
                     .limit(100)
                     .all())
 
-        return render_template('home.html', messages=messages)
+
+        return render_template('home.html', messages=messages, likes=liked_messages)
 
     else:
         return render_template('home-anon.html')
@@ -360,4 +366,26 @@ def add_header(req):
     return req
 
 
-# if a user likes a message, then that means that initially, the record does not exist in LikedMessages table, so we must add record to table.
+
+@app.route('/messages/<int:msg_id>/like/add', methods=["POST"])
+def add_like(msg_id):
+    """ If user clicks button check if message exists in liked message table. if a exists, remove from db. Else add to db"""
+
+    message_exists = LikedMessage.query.filter_by(message_id=msg_id, user_id=g.user.id).first()
+    if message_exists:
+        db.session.delete(message_exists)
+    else:
+        new_messsage = LikedMessage(message_id=msg_id, user_id=g.user.id)
+        db.session.add(new_messsage)
+    # import pdb; pdb.set_trace()
+    db.session.commit()
+    return redirect('/')
+
+@app.route('/users/<int:user_id>/likes')
+def like_count(user_id):
+    user = User.query.get_or_404(user_id)
+    return render_template('users/likes.html', user=user)
+
+
+
+   

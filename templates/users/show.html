@@ -6,7 +6,8 @@
       {% for message in messages %}
 
         <li class="list-group-item">
-          <a href="/messages/{{ message.id }}" class="message-link"/>
+          {#<a href="/messages/{{ message.id }}" class="message-link"/>
+          #}
 
           <a href="/users/{{ user.id }}">
             <img src="{{ user.image_url }}" alt="user image" class="timeline-image">
@@ -17,6 +18,17 @@
             <span class="text-muted">{{ message.timestamp.strftime('%d %B %Y') }}</span>
             <p>{{ message.text }}</p>
           </div>
+          {% if g.user.id != message.user_id %}
+            <div>
+                <p>
+                    <form action="/messages/{{ message.id }}/like/add" method="POST">
+                      <button id="{{message.id}}" class="like btn btn-primary" type="submit">Like</button>
+                      {# <button class="btn" type="submit"><i class="far fa-heart"></i></button> #}
+                    </form>
+                  </p>
+            </div>
+          {% endif %}
+
         </li>
 
       {% endfor %}
