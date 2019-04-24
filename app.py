@@ -3,8 +3,9 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import or_
 
-from forms import UserAddForm, LoginForm, MessageForm
+from forms import UserAddForm, LoginForm, MessageForm, UserUpdateForm
 from models import db, connect_db, User, Message
 
 CURR_USER_KEY = "curr_user"
@@ -215,8 +216,34 @@ def stop_following(follow_id):
 @app.route('/users/profile', methods=["GET", "POST"])
 def profile():
     """Update profile for current user."""
+    
+    user = User.query.filter_by(username=g.user.username).first()
+    
+    form = UserUpdateForm(obj=user)
 
-    # IMPLEMENT THIS
+    if form.validate_on_submit():
+        password = form.password.data
+
+        authenticated = user.authenticate(g.user.username, password)
+        
+        if authenticated:
+            user.username = form.username.data
+            user.email = form.email.data
+            user.image_url = form.image_url.data
+            user.header_image_url = form.header_image_url.data
+            user.bio = form.bio.data
+
+            db.session.commit()
+
+            return redirect(f"/users/{g.user.id}")
+        
+        else:
+            flash("Not authenticated")
+            return redirect('/')
+            # Is this 401?
+
+
+    return render_template("users/edit.html", form=form)
 
 
 @app.route('/users/delete', methods=["POST"])
@@ -297,8 +324,14 @@ def homepage():
     """
 
     if g.user:
+
+        # grabs all users' ids the user is following
+        user_following = [user.id for user in g.user.following]
+    
+        # grabs all messages for user and user following
         messages = (Message
                     .query
+                    .filter(or_(Message.user_id.in_(user_following), Message.user_id==g.user.id))
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
