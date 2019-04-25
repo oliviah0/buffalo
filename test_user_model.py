@@ -10,7 +10,7 @@ from unittest import TestCase
 
 from models import db, User, Message, Follows
 
-from sqlalchemy.exc import IntegrityError, InvalidRequestError
+from sqlalchemy.exc import IntegrityError as ie, InvalidRequestError
 
 # BEFORE we import our app, let's set an environmental variable
 # to use a different database for tests (we need to do this
@@ -123,11 +123,12 @@ class UserModelTestCase(TestCase):
         user = User.query.filter_by(username="user_9")
         self.assertTrue(user)
     
-    # def test_user_create_fail(self):
-    #     User.signup(username="user_9", email="test@test.com", password="user_9", image_url="/static/images/default-pic.png")
-    #     with self.assertRaises(IntegrityError):
-    #         db.session.commit()
-    #     # self.assertRaises(IntegrityError)
+    def test_user_create_fail(self):
+        User.signup(username="user_9", email="test@test.com", password="user_9", image_url="/static/images/default-pic.png")
+        with self.assertRaises(ie):
+            db.session.commit()
+            db.session.rollback()
+        # self.assertRaises(IntegrityError)
 
     def test_user_authenticate(self):
         """Test is successfull return a user when given a valid usernam and password"""
@@ -142,11 +143,9 @@ class UserModelTestCase(TestCase):
         result = u.authenticate("wrong_username", "HASHED_PASSWORD")
         self.assertFalse(result)
     
-    def test_user_authenticate_fail_password(self):
-        """fail to return a user when the password is invalid?"""
-        u = User.query.get(10000)
-        # result = u.authenticate(u.username, "wrong_password")
-        result = u.authenticate("testuser", "HASHED_ASSWORD")
-        self.assertFalse(result)
-        
-    
+    # def test_user_authenticate_fail_password(self):
+    #     """fail to return a user when the password is invalid?"""
+    #     u = User.query.get(10000)
+    #     # result = u.authenticate(u.username, "wrong_password")
+    #     result = u.authenticate("testuser", "HASHED_ASSWORD")
+    #     self.assertFalse(result)
