@@ -347,12 +347,9 @@ def homepage():
 
     if g.user:
 
-        likes = LikedMessage.query.filter_by(user_id=g.user.id).all()
-
         # grabs all users' ids the user is following
         user_following = [user.id for user in g.user.following]
-        liked_messages = [msg.message_id for msg in g.user.liked_messages]
-       
+
         # grabs all messages for user and user following
         messages = (Message
                     .query
@@ -361,8 +358,7 @@ def homepage():
                     .limit(100)
                     .all())
 
-
-        return render_template('home.html', messages=messages, likes=liked_messages)
+        return render_template('home.html', messages=messages)
 
     else:
         return render_template('home-anon.html')

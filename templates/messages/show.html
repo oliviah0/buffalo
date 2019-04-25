@@ -34,20 +34,21 @@
             <p class="single-message">{{ message.text }}</p>
             <span class="text-muted">{{ message.timestamp.strftime('%d %B %Y') }}</span>
           </div>
-          <div>
-              <p>
-                  <form action="/messages/{{ message.id }}/like/add" method="POST">
-                    <button class="btn btn-primary" type="submit">{{
-                      {% if LikedMessage.query.filter_by(message_id=msg_id, user_id=g.user.id) %}
-                        UNLIKE
-                      {% else %}
-                        LIKE
-                      {% endif %}
-                    }}</button>
-                    {# <button class="btn" type="submit"><i class="far fa-heart"></i></button> #}
-                  </form>
-                </p>
-          </div>
+              {% if g.user.id != message.user_id %}
+              <div>
+                  <p>
+                      <form action="/messages/{{ message.id }}/like/add" method="POST">
+                        <button class="btn like" type="submit">
+                        {% if  g.user in message.liked_users %}
+                          <i class="fas fa-heart"></i>
+                        {% else %}
+                          <i class="far fa-heart"></i>
+                        {% endif %}
+                      </button>
+                      </form>
+                    </p>
+              </div>
+            {% endif %}
         </li>
       </ul>
     </div>

@@ -39,12 +39,14 @@ class UserModelTestCase(TestCase):
         Message.query.delete()
         Follows.query.delete()
 
+
         self.client = app.test_client()
 
     def test_user_model(self):
         """Does basic model work?"""
 
         u = User(
+            id=10000,
             email="test@test.com",
             username="testuser",
             password="HASHED_PASSWORD"
@@ -56,3 +58,22 @@ class UserModelTestCase(TestCase):
         # User should have no messages & no followers
         self.assertEqual(len(u.messages), 0)
         self.assertEqual(len(u.followers), 0)
+
+    def test_user_repr(self):
+        u = User(
+            id=10000,
+            email="test@test.com",
+            username="testuser",
+            password="HASHED_PASSWORD"
+        )
+
+        db.session.add(u)
+        db.session.commit()
+
+        test_user = User.query.get(10000)
+        
+        print("PRINTING USER", test_user)
+        # import ipdb; ipdb.set_trace()
+        self.assertEqual(str(u), f"<User #{test_user.id}: {test_user.username}, {test_user.email}>")
+
+    def 

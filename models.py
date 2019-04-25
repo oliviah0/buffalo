@@ -48,8 +48,8 @@ class User(db.Model):
     """User in the system."""
 
     __tablename__ = 'users'
-#   backref=liked_user 
-    liked_messages = db.relationship("LikedMessage", backref="users", cascade="all,delete")
+#   db.relationship("", backref=liked_user , cascase="all,delete")
+    liked_messages = db.relationship("Message", backref="liked_users", secondary="liked_messages")
 
     id = db.Column(
         db.Integer,
@@ -166,9 +166,6 @@ class Message(db.Model):
     """An individual message ("warble")."""
 
     __tablename__ = 'messages'
-
-    liked_messages = db.relationship("LikedMessage", backref="messages", cascade="all,delete")
-
 
     id = db.Column(
         db.Integer,

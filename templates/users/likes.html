@@ -4,24 +4,24 @@
   <div class="col-sm-6">
     <ul class="list-group" id="messages">
      
-      {% for like in user.liked_messages %}
+      {% for message in user.liked_messages %}
         <li class="list-group-item">
            <a href="/messages/{{ message.id }}" class="message-link"/>
           
-          <a href="/users/{{ user.id }}">
-            <img src="{{ user.image_url }}" alt="user image" class="timeline-image">
+          <a href="/users/{{ message.user.id }}">
+            <img src="{{ message.user.image_url }}" alt="user image" class="timeline-image">
           </a>
 
           <div class="message-area">
-            <a href="/users/{{ user.id }}">@{{ like.messages.user.username }}</a>
-            <span class="text-muted">{{ like.messages.timestamp.strftime('%d %B %Y') }}</span>
-            <p>{{ like.messages.text }}</p>
+            <a href="/users/{{ message.user.id }}">@{{ message.user.username }}</a>
+            <span class="text-muted">{{ message.timestamp.strftime('%d %B %Y') }}</span>
+            <p>{{ message.text }}</p>
           </div>
           <div>
               <p>
-                  <form action="/messages/{{ like.messages.id }}/like/add" method="POST">
-                    <button id="{{like.messages.id}}" class="like btn btn-primary" type="submit">
-                        UNLIKE
+                  <form action="/messages/{{ message.id }}/like/add" method="POST">
+                    <button id="{{ message.id }}" class="like btn" type="submit">
+                        <i class="fas fa-heart"></i>
                     </button>
                   </form>
                 </p>

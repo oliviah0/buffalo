@@ -20,6 +20,8 @@ body.error-404 {
   cursor: pointer;
 }
 
+
+
 /* ======================= Nav */
 
 .navbar {
@@ -271,6 +273,13 @@ nav + .container {
 #messages .list-group-item a:not(.message-link) {
   position: relative;
   z-index: 2;
+}
+
+.like {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
 }
 
 #messages .list-group-item {
