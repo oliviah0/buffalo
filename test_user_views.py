@@ -159,4 +159,3 @@ class UserModelTestCase(TestCase):
             self.assertEqual(response.status_code, 200)
 
             self.assertEqual(Follows.query.count(), 0)
-
