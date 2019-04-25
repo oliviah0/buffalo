@@ -4,7 +4,6 @@
 #
 #    python -m unittest test_user_model.py
 
-import psycopg2
 import os
 from unittest import TestCase
 
@@ -143,9 +142,9 @@ class UserModelTestCase(TestCase):
         result = u.authenticate("wrong_username", "HASHED_PASSWORD")
         self.assertFalse(result)
     
-    # def test_user_authenticate_fail_password(self):
-    #     """fail to return a user when the password is invalid?"""
-    #     u = User.query.get(10000)
-    #     # result = u.authenticate(u.username, "wrong_password")
-    #     result = u.authenticate("testuser", "HASHED_ASSWORD")
-    #     self.assertFalse(result)
+    def test_user_authenticate_fail_password(self):
+        """fail to return a user when the password is invalid?"""
+        u = User.query.get(10000)
+     
+        with self.assertRaises(ValueError):
+            u.authenticate("testuser", "password")
