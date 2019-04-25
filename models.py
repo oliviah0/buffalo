@@ -13,7 +13,6 @@ class LikedMessage(db.Model):
 
     __tablename__ = 'liked_messages'
 
-
     message_id = db.Column(
         db.Integer,
         db.ForeignKey('messages.id', ondelete="cascade"),
@@ -49,7 +48,7 @@ class User(db.Model):
     """User in the system."""
 
     __tablename__ = 'users'
-
+#   backref=liked_user 
     liked_messages = db.relationship("LikedMessage", backref="users", cascade="all,delete")
 
     id = db.Column(
