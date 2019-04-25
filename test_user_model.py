@@ -50,7 +50,6 @@ class UserModelTestCase(TestCase):
         db.session.add(u)
         db.session.commit()
 
-
         self.client = app.test_client()
 
     def test_user_model(self):
@@ -63,17 +62,19 @@ class UserModelTestCase(TestCase):
         self.assertEqual(len(u.followers), 0)
 
     def test_user_repr(self):
-        
+        """Test result of repr"""
+
         u = User.query.get(10000)
 
         db.session.add(u)
         db.session.commit()
 
         test_user = User.query.get(10000)
-        
         self.assertEqual(str(u), f"<User #{test_user.id}: {test_user.username}, {test_user.email}>")
 
     def test_user1_following(self):
+        """Test user1 following user2"""
+
         user_1 = User(
             id=10002,
             email="test2@test.com",
@@ -87,14 +88,18 @@ class UserModelTestCase(TestCase):
         user_1.following.append(user_2)
 
         db.session.commit()
+
         # Test if user_2 is following user_1
         self.assertIn(user_2, user_1.following)
         user_1.following.pop()
         db.session.commit()
+
         # Detect user2 is no longer following user_1
         self.assertNotIn(user_2, user_1.following)
 
     def test_user1_followed_by(self):
+        """Test user1 followers"""
+
         user_1 = User(
             id=10002,
             email="test2@test.com",
@@ -106,44 +111,74 @@ class UserModelTestCase(TestCase):
 
         db.session.add(user_1)
         user_2.followers.append(user_1)
-
         db.session.commit()
+
         # Test if user_1 is in user_2 followers
         self.assertIn(user_1, user_2.followers)
+        
+        #Remove user1 following from user2
         user_2.followers.pop()
         db.session.commit()
+
         # Detect user_1 is no longer in user_2 followers
         self.assertNotIn(user_1, user_2.followers)
 
     def test_user_create(self):
-        User.signup(username="user_9", email="user_9@email.com", password="user_9", image_url="/static/images/default-pic.png")
-        db.session.commit()
+        """Test creation of user with class method"""
 
+        User.signup(
+            username="user_9", 
+            email="user_9@email.com", 
+            password="user_9", 
+            image_url="/static/images/default-pic.png"
+        )
+
+        db.session.commit()
         user = User.query.filter_by(username="user_9")
         self.assertTrue(user)
     
     def test_user_create_fail(self):
-        User.signup(username="user_9", email="test@test.com", password="user_9", image_url="/static/images/default-pic.png")
+        """Test for integrity error when creating a user with an email already in use"""
+        #NOT WORKING
+
+        User.signup(
+            username="user_9", 
+            email="test@test.com", 
+            password="user_9", 
+            image_url="/static/images/default-pic.png"
+        )
+
         with self.assertRaises(ie):
             db.session.commit()
-            db.session.rollback()
-        # self.assertRaises(IntegrityError)
+        db.session.rollback()
+        # #self.assertRaises(IntegrityError)
 
     def test_user_authenticate(self):
-        """Test is successfull return a user when given a valid usernam and password"""
-        u = User.signup(username="user_9", email="user_9@email.com", password="user_9", image_url="/static/images/default-pic.png")
+        """Test authenication of user with valid username and password"""
+
+        u = User.signup(
+            username="user_9", 
+            email="user_9@email.com", 
+            password="user_9", 
+            image_url="/static/images/default-pic.png"
+        )
+
         db.session.commit()
         result = u.authenticate("user_9", "user_9")
         self.assertTrue(result)
+        #check if the value result equals value in instance
     
     def test_user_autheticate_fail_username(self):
-        """ fail to return a user when the username is invalid?"""
+        """Test if user login authentication fails with invalid username"""
+
         u = User.query.get(10000)
         result = u.authenticate("wrong_username", "HASHED_PASSWORD")
+
         self.assertFalse(result)
     
     def test_user_authenticate_fail_password(self):
-        """fail to return a user when the password is invalid?"""
+        """Test if user login authentication fails with invalid username"""
+
         u = User.query.get(10000)
      
         with self.assertRaises(ValueError):

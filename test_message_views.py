@@ -44,18 +44,17 @@ class MessageViewTestCase(TestCase):
 
         self.client = app.test_client()
 
-        # self.testuser = User.signup(username="testuser",
-        #                             email="test@test.com",
-        #                             password="testuser",
-        #                             image_url=None)
-        self.testuser = User(id=10000,
-                                    username="testuser",
-                                    email="test@test.com",
-                                    password="testuser",
-                                    image_url=None)
+        self.testuser = User(
+            id=10000,
+            username="testuser",
+            email="test@test.com",
+            password="testuser",
+            image_url=None
+        )
 
         db.session.add(self.testuser)
         db.session.commit()
+
         message = Message(id=100, text="Test text", user_id=10000)
         db.session.add(message)
         db.session.commit()
@@ -82,18 +81,20 @@ class MessageViewTestCase(TestCase):
             self.assertIn(msg.text, "Hello")
             
     def test_message_view(self):
-        """Testing is message view"""
+        """Testing message view"""
 
         response = self.client.get('/messages/100')
+        
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Test text', response.data)
 
     def test_message_delete(self):
-        """Testing is message delete"""
+        """Testing message delete"""
 
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.testuser.id
+            
             response = self.client.post('/messages/100/delete')
             self.assertFalse(Message.query.get(100))
-    
+     

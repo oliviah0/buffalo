@@ -55,18 +55,23 @@ class UserModelTestCase(TestCase):
 
     def test_user_view_profile_info(self):
         """Testing if user view is rendering user information"""
+
         response = self.client.get('/users/10000')
+        
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'@testuser', response.data)
     
     def test_user_view_users_search(self):
-        """Testing the /users view"""
+        """Testing search results of users"""
+        
         response = self.client.get('/users?q=testuser')
+        
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'@testuser', response.data)
     
     def test_user_view_following(self):
         """Testing the user following view"""
+        
         user_1 = User(
             id=10002,
             email="test2@test.com",
@@ -75,7 +80,6 @@ class UserModelTestCase(TestCase):
         )
 
         user_2 = User.query.get(10000)
-
 
         db.session.add(user_1)
         user_2.following.append(user_1)
@@ -86,11 +90,13 @@ class UserModelTestCase(TestCase):
                 sess[CURR_USER_KEY] = self.u.id
 
             response = self.client.get('/users/10000/following')
+
             self.assertEqual(response.status_code, 200)
             self.assertIn(b'@testuser2', response.data)
     
     def test_user_view_followers(self):
         """Testing the user followers view"""
+        
         user_1 = User(
             id=10002,
             email="test2@test.com",
@@ -99,7 +105,6 @@ class UserModelTestCase(TestCase):
         )
 
         user_2 = User.query.get(10000)
-
 
         db.session.add(user_1)
         user_2.following.append(user_1)
@@ -110,11 +115,13 @@ class UserModelTestCase(TestCase):
                 sess[CURR_USER_KEY] = self.u.id
 
             response = self.client.get('/users/10002/followers')
+            
             self.assertEqual(response.status_code, 200)
             self.assertIn(b'@testuser', response.data)
     
     def test_user_view_start_following(self):
         """Testing the user starts following"""
+        
         user_1 = User(
             id=10002,
             email="test2@test.com",
@@ -131,20 +138,20 @@ class UserModelTestCase(TestCase):
 
             response = self.client.post('/users/follow/10002', follow_redirects=True)
             self.assertEqual(response.status_code, 200)
+            
             current_user_followers = User.query.get(10000).following
             following_user = User.query.get(10002)
-            # import pdb; pdb.set_trace()
             self.assertIn(following_user, current_user_followers)
 
     def test_user_view_stops_following(self):
         """Testing the user stops following"""
+
         user_1 = User(
             id=10002,
             email="test2@test.com",
             username="testuser2",
             password="HASHED_PASSWORD2"
         )
-
         user_2 = User.query.get(10000)
 
         db.session.add(user_1)
@@ -157,5 +164,4 @@ class UserModelTestCase(TestCase):
 
             response = self.client.post('/users/stop-following/10002', follow_redirects=True)
             self.assertEqual(response.status_code, 200)
-
             self.assertEqual(Follows.query.count(), 0)
