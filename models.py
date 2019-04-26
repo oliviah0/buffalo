@@ -73,6 +73,10 @@ class DirectMessage(db.Model):
         db.ForeignKey('users.id', ondelete="cascade")
     )
 
+    # direct_messages = db.relationship("User", foreign_keys=[user_from_id, user_to_id])
+
+
+
 class User(db.Model):
     """User in the system."""
 
@@ -120,6 +124,12 @@ class User(db.Model):
         nullable=False,
     )
 
+    private = db.Column(
+        db.Boolean,
+        default=False,
+        nullable=True
+    )
+
     messages = db.relationship('Message')
 
     followers = db.relationship(
@@ -149,6 +159,8 @@ class User(db.Model):
             primaryjoin=(DirectMessage.user_to_id == id),
             secondaryjoin=(DirectMessage.user_from_id == id)
     )
+
+  
 
     def __repr__(self):
         return f"<User #{self.id}: {self.username}, {self.email}>"
@@ -203,7 +215,23 @@ class User(db.Model):
                 return user
 
         return False
-
+    
+    def show_messages(self):
+        """Show messages"""
+        messages = (Message
+                    .query
+                    .filter(Message.user_id == self.id)
+                    .order_by(Message.timestamp.desc())
+                    .limit(100)
+                    .all())
+        return messages
+    
+    def show_private_account_messages(self, logged_in_user):
+        """Show private account messages"""
+        if self in logged_in_user.following:
+            return self.show_messages()
+        else:
+            return []
 
 class Message(db.Model):
     """An individual message ("warble")."""

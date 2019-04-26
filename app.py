@@ -148,14 +148,18 @@ def users_show(user_id):
 
     user = User.query.get_or_404(user_id)
 
+    if user.private and g.user:
+        messages = user.show_private_account_messages(g.user)
+        # if g.user:
+        #     if user in g.user.following:
+        #         messages = user.show_messages()
+        #     else:
+        #         messages = []
+
+    else:
+        messages = user.show_messages()
     # snagging messages in order from the database;
     # user.messages won't be in order by default
-    messages = (Message
-                .query
-                .filter(Message.user_id == user_id)
-                .order_by(Message.timestamp.desc())
-                .limit(100)
-                .all())
     
     # If the current user is on their page,
     # they can see their direct messages
@@ -163,6 +167,7 @@ def users_show(user_id):
     if g.user.id == user_id:
         # Get all the direct messages
         direct_messages = DirectMessage.query.all()
+        # import pdb; pdb.set_trace()
         # Have fix message.user_to / message.user_from
         # to use to filter direct_messages
     else:
@@ -244,7 +249,7 @@ def profile():
             user.image_url = form.image_url.data
             user.header_image_url = form.header_image_url.data
             user.bio = form.bio.data
-
+            user.private = form.private.data
             db.session.commit()
 
             return redirect(f"/users/{g.user.id}")

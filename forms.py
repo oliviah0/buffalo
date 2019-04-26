@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, TextAreaField
+from wtforms import StringField, PasswordField, TextAreaField, BooleanField
 from wtforms.validators import DataRequired, Email, Length, URL
 
 
@@ -33,6 +33,7 @@ class UserUpdateForm(FlaskForm):
     header_image_url = StringField('(Optional) Header Image URL')
     bio = TextAreaField('(Optional) Bio')
     password = PasswordField('Password', validators=[Length(min=6)])
+    private = BooleanField('Private')
 
 # ADDING DIRECT MESSAGE FORM
 class DirectMessageForm(FlaskForm):
