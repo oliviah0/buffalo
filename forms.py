@@ -34,3 +34,11 @@ class UserUpdateForm(FlaskForm):
     bio = TextAreaField('(Optional) Bio')
     password = PasswordField('Password', validators=[Length(min=6)])
 
+# ADDING DIRECT MESSAGE FORM
+class DirectMessageForm(FlaskForm):
+    """Form for adding direct message"""
+
+    # username = StringField('Username', validators=[DataRequired()])
+    text = TextAreaField('Direct Message', validators=[Length(min=6)])
+    
+

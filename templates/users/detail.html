@@ -49,7 +49,11 @@
             <form method="POST" action="/users/follow/{{ user.id }}">
               <button class="btn btn-outline-primary">Follow</button>
             </form>
+           
             {% endif %}
+            <form method="GET" action="/messages/direct-message/new/{{ user.id }}">
+              <button class="btn btn-outline-primary">Direct Message</button>
+            </form>
             {% endif %}
           </div>
         </ul>

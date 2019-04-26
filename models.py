@@ -43,6 +43,35 @@ class Follows(db.Model):
         primary_key=True,
     )
 
+class DirectMessage(db.Model):
+    """Model for Direct Message"""
+    __tablename__ = "direct_messages"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+    )
+
+    text = db.Column(
+        db.String(140),
+        nullable=False,
+    )
+
+    timestamp = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.utcnow(),
+    )
+
+    user_from_id = db.Column(
+            db.Integer,
+            db.ForeignKey('users.id', ondelete="cascade")
+    )
+
+    user_to_id = db.Column(
+            db.Integer,
+            db.ForeignKey('users.id', ondelete="cascade")
+    )
 
 class User(db.Model):
     """User in the system."""
@@ -105,6 +134,20 @@ class User(db.Model):
         secondary="follows",
         primaryjoin=(Follows.user_being_followed_id == id),
         secondaryjoin=(Follows.user_following_id == id)
+    )
+
+    user_from = db.relationship(
+            "User",
+            secondary="direct_messages",
+            primaryjoin=(DirectMessage.user_from_id == id),
+            secondaryjoin=(DirectMessage.user_to_id == id)
+    )
+
+    user_to = db.relationship(
+            "User",
+            secondary="direct_messages",
+            primaryjoin=(DirectMessage.user_to_id == id),
+            secondaryjoin=(DirectMessage.user_from_id == id)
     )
 
     def __repr__(self):
@@ -190,6 +233,10 @@ class Message(db.Model):
     )
 
     user = db.relationship('User')
+
+
+
+
 
 
 def connect_db(app):

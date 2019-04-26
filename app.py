@@ -5,8 +5,8 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import or_
 
-from forms import UserAddForm, LoginForm, MessageForm, UserUpdateForm
-from models import db, connect_db, User, Message, LikedMessage
+from forms import UserAddForm, LoginForm, MessageForm, UserUpdateForm, DirectMessageForm
+from models import db, connect_db, User, Message, LikedMessage, DirectMessage
 
 CURR_USER_KEY = "curr_user"
 
@@ -380,6 +380,23 @@ def add_header(req):
     req.headers["Expires"] = "0"
     req.headers['Cache-Control'] = 'public, max-age=0'
     return req
+
+@app.route('/messages/direct-message/new/<int:message_to_user_id>', methods=["GET", "POST"])
+def direct_messsage(message_to_user_id):
+    form = DirectMessageForm()
+    if form.validate_on_submit():
+        msg_text = request.form.get("message")
+        new_direct_msg = DirectMessage(
+            text=form.text.data,
+            user_from_id=g.user.id,
+            user_to_id=message_to_user_id
+        )
+        db.session.add(new_direct_msg)
+        db.session.commit()
+        return redirect("/")
+    else:
+        return render_template('/messages/new_direct_message.html', form=form)
+
 
 
 
