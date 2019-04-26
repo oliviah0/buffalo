@@ -156,7 +156,19 @@ def users_show(user_id):
                 .order_by(Message.timestamp.desc())
                 .limit(100)
                 .all())
-    return render_template('users/show.html', user=user, messages=messages)
+    
+    # If the current user is on their page,
+    # they can see their direct messages
+    # else they cant see the messages
+    if g.user.id == user_id:
+        # Get all the direct messages
+        direct_messages = DirectMessage.query.all()
+        # Have fix message.user_to / message.user_from
+        # to use to filter direct_messages
+    else:
+        direct_messages = []
+
+    return render_template('users/show.html', user=user, messages=messages, direct_messages=direct_messages, user_id=user_id)
 
 
 @app.route('/users/<int:user_id>/following')
@@ -393,14 +405,6 @@ def direct_messsage(message_to_user_id):
         )
         db.session.add(new_direct_msg)
         db.session.commit()
-        return redirect("/")
+        return redirect(f"/users/{g.user.id}")
     else:
         return render_template('/messages/new_direct_message.html', form=form)
-
-
-
-
-
-
-
-

@@ -64,13 +64,13 @@ class DirectMessage(db.Model):
     )
 
     user_from_id = db.Column(
-            db.Integer,
-            db.ForeignKey('users.id', ondelete="cascade")
+        db.Integer,
+        db.ForeignKey('users.id', ondelete="cascade")
     )
 
     user_to_id = db.Column(
-            db.Integer,
-            db.ForeignKey('users.id', ondelete="cascade")
+        db.Integer,
+        db.ForeignKey('users.id', ondelete="cascade")
     )
 
 class User(db.Model):
