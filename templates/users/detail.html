@@ -8,26 +8,26 @@
   <div class="container">
     <div class="row justify-content-end">
       <div class="col-9">
-        <ul class="user-stats nav nav-pills">
-          <li class="stat">
+        <ul class="user-stats nav nav-pills profile-stats">
+          <li class="stat profile-stat active">
             <p class="small">Messages</p>
             <h4>
               <a href="/users/{{ user.id }}">{{ user.messages | length }}</a>
             </h4>
           </li>
-          <li class="stat">
+          <li class="stat profile-stat">
             <p class="small">Following</p>
             <h4>
               <a href="/users/{{ user.id }}/following">{{ user.following | length }}</a>
             </h4>
           </li>
-          <li class="stat">
+          <li class="stat profile-stat">
             <p class="small">Followers</p>
             <h4>
               <a href="/users/{{ user.id }}/followers">{{ user.followers | length }}</a>
             </h4>
           </li>
-          <li class="stat">
+          <li class="stat profile-stat">
             <p class="small">Likes</p>
             <h4> 
               <a href="/users/{{ user.id }}/likes">
@@ -36,7 +36,7 @@
           </li>
           <div class="ml-auto">
             {% if g.user.id == user.id %}
-            <a href="/users/profile" class="btn btn-outline-secondary">Edit Profile</a>
+            <a href="/users/profile" class="btn btn-outline-info">Edit Profile</a>
             <form method="POST" action="/users/delete" class="form-inline">
               <button class="btn btn-outline-danger ml-2">Delete Profile</button>
             </form>
@@ -52,7 +52,7 @@
            
             {% endif %}
             <form method="GET" action="/messages/direct-message/new/{{ user.id }}">
-              <button class="btn btn-outline-primary">Direct Message</button>
+              <button class="btn btn-outline-primary ml-2">Direct Message</button>
             </form>
             {% endif %}
           </div>
@@ -66,7 +66,7 @@
   <div class="col-sm-3">
     <h4 id="sidebar-username">@{{ user.username }}</h4>
     <p>{{ user.bio }}</p>
-    <p class="user-location"><span class="fa fa-map-marker"></span>{{ user.location }}</p>
+    <p class="user-location"><span class="fa fa-map-marker mr-1"></span>{{ user.location }}</p>
   </div>
 
   {% block user_details %}

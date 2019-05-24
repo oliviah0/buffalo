@@ -12,6 +12,10 @@ body.error-404 {
   margin-bottom: 20px;
 }
 
+.form-control.home {
+  margin-bottom: 10px;
+}
+
 .btn {
   border-radius: 50px;
 }
@@ -20,16 +24,22 @@ body.error-404 {
   cursor: pointer;
 }
 
+.badge-warning{
+  position:relative;
+  top: -10px;
+  left: -12px;
+}
 
 /* ======================= Nav */
 
 .navbar {
+  display: flex;
   background-color: #fff;
   height: 46px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.25);
   margin-bottom: 1rem;
   position: relative;
-  z-index: 9999;
+  z-index: 1000;
 }
 
 .navbar a {
@@ -70,9 +80,11 @@ ul.nav.navbar-nav li {
 }
 
 nav form.navbar-form {
-  display: flex;
-  position: relative;
+  margin-left: 90px;
+  display: inline-block;
+  position: absolute;
 }
+
 
 #search.form-control {
   border-radius: 20px;
@@ -104,6 +116,10 @@ nav form.navbar-form {
   border: 2px solid #007bff;
 }
 
+
+.nav-icon {
+  font-size: 20px;
+}
 /* on "onboarding" pages (signup & login), the navbar is
    different: no search box, the logo is centered, and it has
    a background color.
@@ -224,6 +240,7 @@ nav + .container {
   align-items: center;
 }
 
+
 .user-stats > .ml-auto {
   display: flex;
   align-items: center;
@@ -232,6 +249,11 @@ nav + .container {
 .user-stats > .ml-auto .btn {
   min-width: 105px;
   padding: 6px 16px;
+}
+
+.nav-pills .active {
+  border: none;
+  border-bottom: 2px solid #0079a1;
 }
 
 .stat {
@@ -279,6 +301,18 @@ nav + .container {
   right: 0;
   bottom: 0;
   z-index: 10;
+}
+
+.like .fas {
+  color: palevioletred;
+}
+
+.like .fas:hover {
+  color: grey;
+}
+
+.like .far:hover {
+  color: palevioletred;
 }
 
 #messages .list-group-item {
@@ -404,7 +438,7 @@ p.card-bio {
   width: 100vw;
   left: 0;
   z-index: -1;
-  background-image: url("/static/images/signed-out-home.jpg");
+  background-image: url("/static/images/buffalo-hero.jpg");
   background-size: cover;
   background-position: center center;
   color: #fff;
@@ -468,7 +502,7 @@ p.card-bio {
 }
 
 #home-aside .stat h4 {
-  text-align: left;
+  text-align: center;
 }
 
 /* ========================== Signup/Login */
@@ -542,3 +576,110 @@ p.card-bio {
 .message-404 .form-inline input {
   flex: 1;
 }
+
+
+/* ================================ Friend Request Page */
+#requests-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+}
+
+#requests {
+  position: relative;
+}
+
+#requests .request-link {
+
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+
+#requests .list-group-item a:not(.request-link) {
+  position: relative;
+  z-index: 2;
+}
+
+#requests .list-group-item {
+  position: relative;
+  display: flex;
+  flex-direction: row; 
+  align-items: center;
+  padding: 7px 20px 12px;
+}
+
+#requests:not(.no-hover) .list-group-item:hover {
+  background-color: #e6ecf0;
+}
+
+
+#requests.no-hover .request-area {
+  width: 100%;
+}
+
+#requests.no-hover .request-heading {
+  display: flex;
+  justify-content: space-between;
+  height: 47px;
+  margin-top: 3px;
+}
+
+#requests.no-hover .request-heading .btn {
+  min-width: 105px;
+}
+
+.single-request {
+  font-size: 27px;
+  line-height: 32px;
+  letter-spacing: 0.01em;
+  margin-bottom: 10px;
+}
+
+.request-buttons {
+  position: absolute;
+  z-index: 10;
+  right: 10px;
+  display: flex;
+  flex-direction: row;
+}
+
+.request-area {
+  padding-left: 10px;
+}
+
+/* ================================ Autocomplete list on Search Bar */
+
+.ui-autocomplete {
+  position: absolute;
+  z-index: 2000;
+  cursor: default;
+  padding: 0;
+  margin-top: 2px;
+  list-style: none;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  -webkit-border-radius: 5px;
+     -moz-border-radius: 5px;
+          border-radius: 5px;
+  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+     -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.ui-autocomplete > li {
+  padding: 1px 5px;
+}
+.ui-autocomplete > li.ui-state-focus {
+  background-color: #DDD;
+}
+.ui-helper-hidden-accessible {
+  display: none;
+}
+
+
+

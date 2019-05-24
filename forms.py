@@ -31,6 +31,7 @@ class UserUpdateForm(FlaskForm):
     email = StringField('E-mail', validators=[DataRequired(), Email()])
     image_url = StringField('(Optional) Image URL')
     header_image_url = StringField('(Optional) Header Image URL')
+    location = StringField('(Optional) Location')
     bio = TextAreaField('(Optional) Bio')
     password = PasswordField('Password', validators=[Length(min=6)])
     private = BooleanField('Private')
@@ -39,7 +40,6 @@ class UserUpdateForm(FlaskForm):
 class DirectMessageForm(FlaskForm):
     """Form for adding direct message"""
 
-    # username = StringField('Username', validators=[DataRequired()])
     text = TextAreaField('Direct Message', validators=[Length(min=6)])
     
 

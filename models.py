@@ -25,6 +25,40 @@ class LikedMessage(db.Model):
         primary_key=True,
     )
 
+class FollowRequest(db.Model):
+    """Connection of a follower <-> followee."""
+
+    __tablename__ = 'follow_requests'
+
+    user_requesting_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete="cascade"),
+        primary_key=True,
+    )
+
+    user_requested_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete="cascade"),
+        primary_key=True,
+    )
+
+    status = db.Column(
+        db.Text,
+        default="Accepted"
+    )
+
+    @classmethod
+    def send_request(cls, user1, user2, status):
+        request = cls(
+            user_requesting_id=user1,
+            user_requested_id=user2,
+            status=status
+        )
+
+        db.session.add(request)
+
+        return request
+
 
 class Follows(db.Model):
     """Connection of a follower <-> followee."""
@@ -43,45 +77,12 @@ class Follows(db.Model):
         primary_key=True,
     )
 
-class DirectMessage(db.Model):
-    """Model for Direct Message"""
-    __tablename__ = "direct_messages"
-
-    id = db.Column(
-        db.Integer,
-        primary_key=True,
-    )
-
-    text = db.Column(
-        db.String(140),
-        nullable=False,
-    )
-
-    timestamp = db.Column(
-        db.DateTime,
-        nullable=False,
-        default=datetime.utcnow(),
-    )
-
-    user_from_id = db.Column(
-        db.Integer,
-        db.ForeignKey('users.id', ondelete="cascade")
-    )
-
-    user_to_id = db.Column(
-        db.Integer,
-        db.ForeignKey('users.id', ondelete="cascade")
-    )
-
-    # direct_messages = db.relationship("User", foreign_keys=[user_from_id, user_to_id])
-
-
 
 class User(db.Model):
     """User in the system."""
 
     __tablename__ = 'users'
-#   db.relationship("", backref=liked_user , cascase="all,delete")
+
     liked_messages = db.relationship("Message", backref="liked_users", secondary="liked_messages")
 
     id = db.Column(
@@ -146,21 +147,14 @@ class User(db.Model):
         secondaryjoin=(Follows.user_following_id == id)
     )
 
-    user_from = db.relationship(
-            "User",
-            secondary="direct_messages",
-            primaryjoin=(DirectMessage.user_from_id == id),
-            secondaryjoin=(DirectMessage.user_to_id == id)
-    )
-
-    user_to = db.relationship(
-            "User",
-            secondary="direct_messages",
-            primaryjoin=(DirectMessage.user_to_id == id),
-            secondaryjoin=(DirectMessage.user_from_id == id)
-    )
-
-  
+    # this doesn't work for my purpose, it only give sme the users who sent me stuff, not the messsages themselves.
+    # user_from = db.relationship(
+    #         "User",
+    #         secondary="direct_messages",
+    #         backref="messages_sent",
+    #         primaryjoin=(DirectMessage.user_to_id == id),
+    #         secondaryjoin=(DirectMessage.user_from_id == id)
+    # )
 
     def __repr__(self):
         return f"<User #{self.id}: {self.username}, {self.email}>"
@@ -215,7 +209,33 @@ class User(db.Model):
                 return user
 
         return False
-    
+
+    @property
+    def pending_friend_requests(self):
+
+        requests = (
+            FollowRequest
+            .query
+            .filter(FollowRequest.user_requested_id == self.id)
+            .filter(FollowRequest.status == "Pending")
+            .all())
+
+        users = [User.query.get(request.user_requesting_id) for request in requests]
+        return users
+
+    @property
+    def pending_sent_friend_requests(self):
+
+        requests = (
+            FollowRequest
+            .query
+            .filter(FollowRequest.user_requesting_id == self.id)
+            .filter(FollowRequest.status == "Pending")
+            .all())
+
+        users = [User.query.get(request.user_requested_id) for request in requests]
+        return users
+
     def show_messages(self):
         """Show messages"""
         messages = (Message
@@ -232,6 +252,49 @@ class User(db.Model):
             return self.show_messages()
         else:
             return []
+
+class DirectMessage(db.Model):
+    """Model for Direct Message"""
+    __tablename__ = "direct_messages"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+    )
+
+    text = db.Column(
+        db.String(140),
+        nullable=False,
+    )
+
+    timestamp = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.utcnow(),
+    )
+
+    user_from_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete="cascade")
+    )
+
+    user_to_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete="cascade")
+    )
+
+    sent_to_user = db.relationship(
+            "User",
+            backref="inbox",
+            foreign_keys=user_to_id
+    )
+
+    sent_from_user = db.relationship(
+            "User",
+            backref="outbox",
+            foreign_keys=user_from_id
+    )
+
 
 class Message(db.Model):
     """An individual message ("warble")."""
@@ -261,10 +324,6 @@ class Message(db.Model):
     )
 
     user = db.relationship('User')
-
-
-
-
 
 
 def connect_db(app):

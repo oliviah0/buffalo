@@ -1,0 +1,22 @@
+Friend Requests:
+Update follow button to show 'cancel request' if we have pending request
+Canceling request will require updating deleting record from db or changing status
+Make tabs to view pending sent and inbox Requests
+
+
+DirectMessages:
+-Show sent DirectMessages
+-Show 
+
+Other:
+-Separate app into smaller 
+-Autofilling when searching
+
+
+autocomplete
+Create a set of usernames
+
+change post button on homepage as a single text bar
+with <i class="fas fa-edit"></i>
+https://fontawesome.com/icons/edit?style=solid
+

@@ -1,12 +1,12 @@
 import os
 
-from flask import Flask, render_template, request, flash, redirect, session, g
+from flask import Flask, render_template, request, flash, redirect, session, g, url_for, Response
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import or_
-
+import json
 from forms import UserAddForm, LoginForm, MessageForm, UserUpdateForm, DirectMessageForm
-from models import db, connect_db, User, Message, LikedMessage, DirectMessage
+from models import db, connect_db, User, Message, LikedMessage, DirectMessage, Follows, FollowRequest
 
 CURR_USER_KEY = "curr_user"
 
@@ -28,6 +28,13 @@ connect_db(app)
 
 ##############################################################################
 # User signup/login/logout
+
+users = User.query.all()
+usernames = [user.username for user in users]
+
+@app.route('/autocomplete', methods=['GET'])
+def autocomplete():
+    return Response(json.dumps(usernames), mimetype='application/json')
 
 
 @app.before_request
@@ -150,30 +157,11 @@ def users_show(user_id):
 
     if user.private and g.user:
         messages = user.show_private_account_messages(g.user)
-        # if g.user:
-        #     if user in g.user.following:
-        #         messages = user.show_messages()
-        #     else:
-        #         messages = []
 
     else:
         messages = user.show_messages()
-    # snagging messages in order from the database;
-    # user.messages won't be in order by default
-    
-    # If the current user is on their page,
-    # they can see their direct messages
-    # else they cant see the messages
-    if g.user.id == user_id:
-        # Get all the direct messages
-        direct_messages = DirectMessage.query.all()
-        # import pdb; pdb.set_trace()
-        # Have fix message.user_to / message.user_from
-        # to use to filter direct_messages
-    else:
-        direct_messages = []
 
-    return render_template('users/show.html', user=user, messages=messages, direct_messages=direct_messages, user_id=user_id)
+    return render_template('users/show.html', user=user, messages=messages, user_id=user_id)
 
 
 @app.route('/users/<int:user_id>/following')
@@ -209,8 +197,15 @@ def add_follow(follow_id):
         return redirect("/")
 
     followee = User.query.get_or_404(follow_id)
-    g.user.following.append(followee)
-    db.session.commit()
+
+    if followee.private:
+        FollowRequest.send_request(g.user.id, follow_id, "Pending")
+        db.session.commit()
+        return redirect("/")
+    else:
+        FollowRequest.send_request(g.user.id, follow_id, "Accepted")
+        g.user.following.append(followee)
+        db.session.commit()
 
     return redirect(f"/users/{g.user.id}/following")
 
@@ -244,10 +239,13 @@ def profile():
         authenticated = user.authenticate(g.user.username, password)
         
         if authenticated:
+
+            # form.populate_obj(user)
             user.username = form.username.data
             user.email = form.email.data
             user.image_url = form.image_url.data
             user.header_image_url = form.header_image_url.data
+            user.location = form.location.data
             user.bio = form.bio.data
             user.private = form.private.data
             db.session.commit()
@@ -258,8 +256,8 @@ def profile():
             flash("Not authenticated")
             return redirect('/')
 
-
     return render_template("users/edit.html", form=form)
+
 
 
 @app.route('/users/delete', methods=["POST"])
@@ -271,10 +269,8 @@ def delete_user():
         return redirect("/")
 
     do_logout()
-
     db.session.delete(g.user)
     db.session.commit()
-
     return redirect("/signup")
 
 @app.route('/users/<int:user_id>/likes')
@@ -282,7 +278,41 @@ def like_count(user_id):
     user = User.query.get_or_404(user_id)
     return render_template('users/likes.html', user=user)
 
+@app.route('/messages/direct-messages')
+def show_direct_messages():
 
+    inbox = g.user.inbox
+    outbox = g.user.outbox
+    return render_template("users/direct-messages.html", inbox=inbox, outbox=outbox)
+
+@app.route('/requests')
+def show_friend_requests():
+
+    requests = g.user.pending_friend_requests
+
+    # pending_requests = [user for user in requests if user.status]
+
+    return render_template("users/requests.html", requests=requests)
+
+
+@app.route('/requests/accept/<int:id>', methods=["POST"])
+def accept_friend_request(id):
+
+    follower = User.query.get(id)
+    request = FollowRequest.query.filter_by(user_requested_id=g.user.id, user_requesting_id=id).first()
+    request.status = "Accepted"
+
+    new_following = g.user.followers.append(follower)
+    db.session.commit()
+    return redirect(f'/users/{g.user.id}/followers')
+
+
+@app.route('/requests/decline/<int:id>', methods=["POST"])
+def decline_friend_request(id):
+    request = FollowRequest.query.filter_by(user_requested_id=g.user.id, user_requesting_id=id).first()
+    request.status = "Declined"
+    db.session.commit()
+    return redirect(f'/users/{g.user.id}/followers')
 
 ##############################################################################
 # Messages routes:
@@ -363,6 +393,7 @@ def homepage():
  
 
     if g.user:
+        form = MessageForm()
 
         # grabs all users' ids the user is following
         user_following = [user.id for user in g.user.following]
@@ -375,7 +406,7 @@ def homepage():
                     .limit(100)
                     .all())
 
-        return render_template('home.html', messages=messages)
+        return render_template('home.html', messages=messages, form=form)
 
     else:
         return render_template('home-anon.html')

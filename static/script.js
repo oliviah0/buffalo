@@ -1,12 +1,18 @@
+$(function () {
+  $.ajax({
+    url: '/autocomplete'
+  }).done(function (data) {
+    $('#search').autocomplete({
+      source: data,
+      minLength: 1
+    });
+  });
+});
+
+let $stat = $(".profile-stats li");
 
 
-let $messages = $('#messages')
-
-$messages.on('click', ".like", async function(e) {
-    e.preventDefault()
-    let messageId = $(e.target).attr('id')
-    let res = await $.post({
-        url: `/messages/${messageId}/add`
-    })
-
-})
+$stat.on("click", function(e){
+  $stat.removeClass("active");
+  // $(e.target).addClass("active");
+});

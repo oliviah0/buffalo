@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<div id="requests-page">
+  <h1>Friend Requests</h1>
+  <div class="col-sm-6">
+    <ul class="list-group" id="requests">
+
+      {% for user in requests %}
+
+      <li class="list-group-item requests-list">
+        <a href="/users/{{ user.id }}" class="request-link" />
+
+        <a href="/users/{{ user.id }}">
+          <img src="{{ user.image_url }}" alt="user image" class="timeline-image">
+        </a>
+
+        <div class="request-area">
+          <a href="/users/{{ user.id }}">@{{ user.username }}</a>
+          <div class="user-location"><small><span class="fa fa-map-marker mr-1"></span>{{ user.location }}</small></div>
+        </div>
+        <form class="request-buttons" method="POST">
+          <button formaction="/requests/accept/{{ user.id }}" class="btn request btn-success btn-sm mx-1"
+            type="submit">Accept</button>
+          <br>
+          <button formaction="/requests/decline/{{ user.id }}" class="btn request btn-danger btn-sm mx-1"
+            type="submit">Decline</button>
+        </form>
+
+      </li>
+
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}
