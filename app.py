@@ -288,11 +288,12 @@ def show_direct_messages():
 @app.route('/requests')
 def show_friend_requests():
 
-    requests = g.user.pending_friend_requests
+    pending_requests = g.user.pending_friend_requests
+    sent_requests = g.user.pending_sent_friend_requests
 
     # pending_requests = [user for user in requests if user.status]
 
-    return render_template("users/requests.html", requests=requests)
+    return render_template("users/requests.html", requests=pending_requests, sent_requests=sent_requests)
 
 
 @app.route('/requests/accept/<int:id>', methods=["POST"])
@@ -311,6 +312,12 @@ def accept_friend_request(id):
 def decline_friend_request(id):
     request = FollowRequest.query.filter_by(user_requested_id=g.user.id, user_requesting_id=id).first()
     request.status = "Declined"
+    db.session.commit()
+    return redirect(f'/users/{g.user.id}/followers')
+
+@app.route('/requests/cancel/<int:id>', methods=["POST"])
+def cancel_friend_request(id):
+    request = FollowRequest.query.filter_by(user_requested_id=id, user_requesting_id=g.user.id).delete()
     db.session.commit()
     return redirect(f'/users/{g.user.id}/followers')
 
@@ -335,7 +342,7 @@ def messages_add():
         g.user.messages.append(msg)
         db.session.commit()
 
-        return redirect(f"/users/{g.user.id}")
+        return redirect(f"/")
 
     return render_template('messages/new.html', form=form)
 
@@ -393,6 +400,7 @@ def homepage():
  
 
     if g.user:
+        print(f'USER#########: {g.user.pending_friend_requests}')
         form = MessageForm()
 
         # grabs all users' ids the user is following
@@ -444,3 +452,9 @@ def direct_messsage(message_to_user_id):
         return redirect(f"/users/{g.user.id}")
     else:
         return render_template('/messages/new_direct_message.html', form=form)
+
+@app.errorhandler(404)
+def page_not_found(e):
+    """404 NOT FOUND page."""
+
+    return render_template('404.html'), 404

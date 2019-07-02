@@ -5,7 +5,9 @@
   <meta charset="UTF-8">
   <title>Buffalo</title>
   <!-- <link rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.css"> -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/yeti/bootstrap.min.css">
+  <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/yeti/bootstrap.min.css"> -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/flatly/bootstrap.min.css">
+  
   <!-- <script
   src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
   integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
@@ -56,11 +58,16 @@
         <li><a href="/signup">Sign up</a></li>
         <li><a href="/login">Log in</a></li>
         {% else %}
-        <li><a href="/requests"><i class="far fa-bell nav-icon"></i></a></li>
         <li>
-          <div class="container">
+        <div id="notification-icon">
+          <a href="/requests"><i class="far fa-bell nav-icon "></i></a>
+          <span class="badge badge-pill badge-warning">{{ g.user.pending_friend_requests|length }}</span>
+        </div>
+        </li>
+        <li>
+          <div class="message-icon">
             <a href="/messages/direct-messages"><i class="far fa-comment nav-icon"></i></a>
-            <span class="badge badge-pill badge-warning">2</span>
+            <span class="badge badge-pill badge-warning">{{ g.user.inbox|length }}</span>
           </div>
         </li>
 

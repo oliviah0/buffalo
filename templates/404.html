@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block body_class %}error-404{%endblock %}
+
+{% block content %}
+
+  <div class="message-404">
+    <pre>
+    \      404 ERROR SORRY      /
+     \                         /
+      \    This page does     /
+       ]     not exist.      [    ,'|
+       ]                     [   /  |
+       ]___               ___[ ,'   |
+       ]  ]\             /[  [ |:   |
+       ]  ] \           / [  [ |:   |
+       ]  ]  ]         [  [  [ |:   |
+       ]  ]  ]__     __[  [  [ |:   |
+       ]  ]  ] ]\ _ /[ [  [  [ |:   |
+       ]  ]  ] ] (#) [ [  [  [ :===='
+       ]  ]  ]_].nHn.[_[  [  [
+       ]  ]  ]  HHHHH. [  [  [
+       ]  ] /   `HH("N  \ [  [
+       ]__]/     HHH  "  \[__[
+       ]         NNN         [
+       ]         N/"         [
+       ]         N H         [
+      /          N            \
+     /           q,            \
+    /                           \
+</pre>
+
+    <p class="text-center m-3">
+      You can search Buffalo using the search box below or return to the 
+      <a href="/"><b>homepage</b></a>.</p>
+    <div class="row">
+      <div class="col-sm-6 ml-auto mr-auto">
+        <form class="form-inline" action="/users">
+          <input name="q" class="form-control mb-0 mr-2" placeholder="Search Buffalo" id="search404">
+          <button class="btn btn-primary" id="search-btn-404">Search</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

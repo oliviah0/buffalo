@@ -1,60 +1,35 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div id="requests-page">
-  <h1>Direct Messages</h1>
+<div id="direct-message-page tab-page">
+  <h1 class="text-center">Direct Messages</h1>
 
-  <div class="col-sm-6">
-    <ul class="list-group" id="messages">
-
-      {% for message in outbox %}
-
-      <li class="list-group-item">
-        <a href="/messages/{{ message.id }}" class="message-link" />
-
-        <a href="/users/{{ message.sent_to_user.id }}">
-          <img src="{{ message.sent_to_user.image_url }}" alt="user image" class="timeline-image">
-        </a>
-
-        <div class="message-area">
-          <a href="/users/{{ message.sent_to_user.id }}">@{{ message.sent_to_user.username }}</a>
-          <span class="text-muted">{{ message.timestamp.strftime('%d %B %Y') }}</span>
-          <p>{{ message.text }}</p>
-        </div>
-      </li>
-      {% endfor %}
-    </ul>
-  </div>
-
-
-</div>
-<h1>Direct Messages</h1>
-<div class="row mt-5">
+<div class="row mt-3">
   
-  <div class="col-4">
+  <div class="col-2 offset-md-2">
     
     <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
       <a class="nav-link active" id="v-pills-inbox-tab" data-toggle="pill" href="#v-pills-inbox" role="tab" aria-controls="v-pills-inbox" aria-selected="true">Inbox</a>
       <a class="nav-link" id="v-pills-outbox-tab" data-toggle="pill" href="#v-pills-outbox" role="tab" aria-controls="v-pills-outbox" aria-selected="false">Outbox</a>
     </div>
   </div>
-  <div class="col-8">
+  <div class="col-6">
    
     <div class="tab-content" id="v-pills-tabContent">
       <div class="tab-pane fade show active" id="v-pills-inbox" role="tabpanel" aria-labelledby="v-pills-inbox-tab">
           <ul class="list-group" id="messages">
       
-            {% for message in outbox %}
+            {% for message in inbox %}
       
             <li class="list-group-item">
               <a href="/messages/{{ message.id }}" class="message-link" />
       
-              <a href="/users/{{ message.sent_to_user.id }}">
-                <img src="{{ message.sent_to_user.image_url }}" alt="user image" class="timeline-image">
+              <a href="/users/{{ message.sent_from_user.id }}">
+                <img src="{{ message.sent_from_user.image_url }}" alt="user image" class="timeline-image">
               </a>
       
               <div class="message-area">
-                <a href="/users/{{ message.sent_to_user.id }}">@{{ message.sent_to_user.username }}</a>
+                <a href="/users/{{ message.sent_from_user.id }}">@{{ message.sent_from_user.username }}</a>
                 <span class="text-muted">{{ message.timestamp.strftime('%d %B %Y') }}</span>
                 <p>{{ message.text }}</p>
               </div>
@@ -64,12 +39,34 @@
       
       
       </div>
-      <div class="tab-pane fade" id="v-pills-outbox" role="tabpanel" aria-labelledby="v-pills-outbox-tab">...</div>
+      <div class="tab-pane fade" id="v-pills-outbox" role="tabpanel" aria-labelledby="v-pills-outbox-tab">
+
+          <ul class="list-group" id="messages">
+      
+              {% for message in outbox %}
+        
+              <li class="list-group-item">
+                <a href="/messages/{{ message.id }}" class="message-link" />
+        
+                <a href="/users/{{ message.sent_to_user.id }}">
+                  <img src="{{ message.sent_to_user.image_url }}" alt="user image" class="timeline-image">
+                </a>
+        
+                <div class="message-area">
+                  <a href="/users/{{ message.sent_to_user.id }}">@{{ message.sent_to_user.username }}</a>
+                  <span class="text-muted">{{ message.timestamp.strftime('%d %B %Y') }}</span>
+                  <p>{{ message.text }}</p>
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+      </div>
     </div>
   </div>
 </div>
 
 
+</div>
 
 
 {% endblock %}

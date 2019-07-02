@@ -9,10 +9,11 @@ $(function () {
   });
 });
 
-let $stat = $(".profile-stats li");
+// let $stat = $(".profile-stat li");
+let $stat = $(".stat");
 
 
 $stat.on("click", function(e){
-  $stat.removeClass("active");
-  // $(e.target).addClass("active");
+  // $stat.removeClass("active");
+  $(e.target).addClass("active");
 });

@@ -12,6 +12,7 @@
           <img src="{{ g.user.image_url }}" alt="Image for {{ g.user.username }}" class="card-image">
           <p>@{{ g.user.username }}</p>
         </a>
+        <hr class="my-1" style="width: 90%;">
         <ul class="user-stats nav nav-pills">
           <li class="stat">
             <p class="small">Messages</p>
@@ -39,7 +40,7 @@
   <div class="col-md-8 col-lg-6  col-sm-12">
     <ul class="list-group list-unstyled" id="messages">
       <li>
-          <form method="POST">
+          <form action="/messages/new" method="POST">
               {{ form.csrf_token }}
               <div>
                 {% if form.text.errors %}
@@ -51,7 +52,7 @@
                 {% endif %}
                 {{ form.text(placeholder="What's happening?", class="form-control home", rows="3") }}
               </div>
-              <button class="btn btn-outline-primary btn-block mb-4">Add my message!</button>
+              <button class="btn btn-outline-primary btn-block mb-4">Post</button>
             </form>
 
       </li>

@@ -5,7 +5,7 @@ body {
 }
 
 body.error-404 {
-  background-color: #1da1f2;
+  background-color: #e6ecf0;
 }
 
 .form-control {
@@ -27,7 +27,7 @@ body.error-404 {
 .badge-warning{
   position:relative;
   top: -10px;
-  left: -12px;
+  left: -11px;
 }
 
 /* ======================= Nav */
@@ -40,6 +40,8 @@ body.error-404 {
   margin-bottom: 1rem;
   position: relative;
   z-index: 1000;
+  box-shadow: 0px 0px 5px rgba(15, 10, 10, 0.3);
+
 }
 
 .navbar a {
@@ -85,6 +87,9 @@ nav form.navbar-form {
   position: absolute;
 }
 
+#search-btn-404 {
+  border-radius: 2px;
+}
 
 #search.form-control {
   border-radius: 20px;
@@ -126,8 +131,10 @@ nav form.navbar-form {
  */
 
 .onboarding > .navbar {
-  background-image: url("/static/images/nav-bg.png");
+  /* background-image: url("/static/images/nav-bg.png"); */
   background-size: 100% 100%;
+  box-shadow: 0px 0px 5px rgba(15, 10, 10, 0.3);
+
 }
 
 .onboarding .navbar-header {
@@ -148,7 +155,7 @@ nav form.navbar-form {
 }
 
 .onboarding > .navbar a {
-  color: #fff;
+  color:#66757f
 }
 
 .onboarding > .navbar form.navbar-form {
@@ -157,6 +164,29 @@ nav form.navbar-form {
 
 .onboarding {
   background-color: #fff;
+  background: url("https://images.unsplash.com/photo-1486622544617-1d8bf5f8b694?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1789&q=80");
+  background-size: cover;
+  background-position: center center;
+  height: 100vh;
+}
+
+.onboarding-container {
+  background: rgba(255, 255, 255, 0.801);
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  top: 0;
+  width: 100vw;
+  left: 0;
+  margin-top: 5rem;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(15, 10, 10, 0.3);
+}
+
+.onboarding-form {
+  padding: 30px 70px;
+  z-index: 100;
 }
 
 @media (max-width: 468px) {
@@ -171,9 +201,9 @@ nav + .container {
 
 /* ===================== User profile */
 
-.join-message {
+/* .join-message {
   margin-top: 100px;
-}
+} */
 
 #profile-image,
 #profile-avatar {
@@ -214,7 +244,7 @@ nav + .container {
 }
 
 #warbler-hero {
-  height: 360px;
+  height: 250px;
   margin-top: -16px;
   opacity: 0.7;
   background-size: cover;
@@ -251,7 +281,7 @@ nav + .container {
   padding: 6px 16px;
 }
 
-.nav-pills .active {
+.user-stats.nav-pills .active {
   border: none;
   border-bottom: 2px solid #0079a1;
 }
@@ -347,7 +377,7 @@ nav + .container {
 
 .user-card {
   width: 100%;
-  padding-bottom: 100%;
+  padding-bottom: 90%;
   border-radius: 5px;
   border: 1px solid #ccc;
   position: relative;
@@ -438,7 +468,7 @@ p.card-bio {
   width: 100vw;
   left: 0;
   z-index: -1;
-  background-image: url("/static/images/buffalo-hero.jpg");
+  background: url("https://images.unsplash.com/photo-1486622544617-1d8bf5f8b694?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1789&q=80");
   background-size: cover;
   background-position: center center;
   color: #fff;
@@ -446,6 +476,18 @@ p.card-bio {
   padding: 1rem;
   text-shadow: 0 0 8px #66757f;
 }
+
+.home-hero-container {
+  background: rgba(0,0,0,0.5);
+  border-radius: 5px;
+  padding: 30px 70px;
+  box-shadow: 0px 0px 10px rgba(15, 10, 10, 0.3);
+  
+}
+/* 
+.home-hero-text {
+  z-index:100;
+} */
 
 .home-hero .btn {
   text-shadow: none;
@@ -455,7 +497,7 @@ p.card-bio {
 }
 
 .home-hero h1 {
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
 }
 
 .home-hero:before {
@@ -465,7 +507,7 @@ p.card-bio {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.3);
+  /* background: rgba(255, 255, 255, 0.3); */
 }
 
 /* ============================== Signed in Home */
@@ -505,12 +547,23 @@ p.card-bio {
   text-align: center;
 }
 
+/* #user_edit_form_container {
+  border: solid black;
+} */
+
+#user_edit_form {
+  padding: 30px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.801);
+  box-shadow: 0px 0px 10px rgba(15, 10, 10, 0.3);
+}
+
 /* ========================== Signup/Login */
 
 #user_form input.form-control {
-  font-size: 18px;
-  font-weight: bold;
-  padding: 12px;
+  font-size: 16px;
+  padding: 20px;
+  width: 20rem;
 }
 
 /* =========================== Edit Page */
@@ -560,13 +613,13 @@ p.card-bio {
 /* ================================ 404 page */
 
 .message-404 {
-  color: white;
-  margin-top: 2em;
-  text-align: center;
+  /* color: white; */
+  /* margin-top: 2em; */
+  margin: auto;
 }
 
 .message-404 a {
-  color: white;
+  /* color: white; */
 }
 
 .message-404 > h4.display-4 {
@@ -577,14 +630,20 @@ p.card-bio {
   flex: 1;
 }
 
+pre {
+  width: fit-content;
+  margin: auto;
+}
+
+
 
 /* ================================ Friend Request Page */
-#requests-page {
+/* #requests-page {
   display: flex;
   flex-direction: column;
   align-items: center;
   align-content: center;
-}
+} */
 
 #requests {
   position: relative;

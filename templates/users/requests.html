@@ -2,36 +2,81 @@
 
 
 {% block content %}
-<div id="requests-page">
-  <h1>Friend Requests</h1>
-  <div class="col-sm-6">
-    <ul class="list-group" id="requests">
+<div id="requests-page tab-page">
+  <h1 class="text-center">Friend Requests</h1>
 
-      {% for user in requests %}
+  <div class="row mt-3">
 
-      <li class="list-group-item requests-list">
-        <a href="/users/{{ user.id }}" class="request-link" />
+    <div class="col-2 offset-md-2">
+      <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+        <a class="nav-link active" id="v-pills-pending-tab" data-toggle="pill" href="#v-pills-pending" role="tab"
+          aria-controls="v-pills-pending" aria-selected="true">Pending</a>
+        <a class="nav-link" id="v-pills-sent-tab" data-toggle="pill" href="#v-pills-sent" role="tab"
+          aria-controls="v-pills-sent" aria-selected="false">Sent</a>
+      </div>
+    </div>
 
-        <a href="/users/{{ user.id }}">
-          <img src="{{ user.image_url }}" alt="user image" class="timeline-image">
-        </a>
+    <div class="col-6">
+      <div class="tab-content" id="v-pills-tabContent">
+        
+        <div class="tab-pane fade show active" id="v-pills-pending" role="tabpanel"
+          aria-labelledby="v-pills-pending-tab">
+          <ul class="list-group" id="requests">
+            {% for user in requests %}
 
-        <div class="request-area">
-          <a href="/users/{{ user.id }}">@{{ user.username }}</a>
-          <div class="user-location"><small><span class="fa fa-map-marker mr-1"></span>{{ user.location }}</small></div>
+            <li class="list-group-item requests-list">
+              <a href="/users/{{ user.id }}" class="request-link" />
+
+              <a href="/users/{{ user.id }}">
+                <img src="{{ user.image_url }}" alt="user image" class="timeline-image">
+              </a>
+
+              <div class="request-area">
+                <a href="/users/{{ user.id }}">@{{ user.username }}</a>
+                <div class="user-location"><small><span class="fa fa-map-marker mr-1"></span>{{ user.location }}</small>
+                </div>
+              </div>
+              <form class="request-buttons" method="POST">
+                <button formaction="/requests/accept/{{ user.id }}" class="btn request btn-success btn-sm mx-1"
+                  type="submit">Accept</button>
+                <br>
+                <button formaction="/requests/decline/{{ user.id }}" class="btn request btn-danger btn-sm mx-1"
+                  type="submit">Decline</button>
+              </form>
+
+            </li>
+            {% endfor %}
+          </ul>
         </div>
-        <form class="request-buttons" method="POST">
-          <button formaction="/requests/accept/{{ user.id }}" class="btn request btn-success btn-sm mx-1"
-            type="submit">Accept</button>
-          <br>
-          <button formaction="/requests/decline/{{ user.id }}" class="btn request btn-danger btn-sm mx-1"
-            type="submit">Decline</button>
-        </form>
 
-      </li>
+        <div class="tab-pane fade" id="v-pills-sent" role="tabpanel" aria-labelledby="v-pills-sent-tab">
+            <ul class="list-group" id="requests">
+                {% for user in sent_requests %}
+    
+                <li class="list-group-item requests-list">
+                  <a href="/users/{{ user.id }}" class="request-link" />
+    
+                  <a href="/users/{{ user.id }}">
+                    <img src="{{ user.image_url }}" alt="user image" class="timeline-image">
+                  </a>
+    
+                  <div class="request-area">
+                    <a href="/users/{{ user.id }}">@{{ user.username }}</a>
+                    <div class="user-location"><small><span class="fa fa-map-marker mr-1"></span>{{ user.location }}</small>
+                    </div>
+                  </div>
+                  <form class="request-buttons" method="POST">
 
-      {% endfor %}
-    </ul>
+                    <button formaction="/requests/cancel/{{ user.id }}" class="btn request btn-danger btn-sm mx-1"
+                      type="submit">Cancel Request</button>
+                  </form>
+    
+                </li>
+                {% endfor %}
+              </ul>
+        </div>
+
+      </div>
+    </div>
   </div>
-</div>
-{% endblock %}
+  {% endblock %}

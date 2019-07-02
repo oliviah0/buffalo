@@ -2,34 +2,37 @@
 
 {% block content %}
 
-<div class="row justify-content-md-center">
-  <div class="col-md-4">
-    <h2 class="join-message">Edit Your Profile.</h2>
-    <form method="POST" id="user_form">
+<div class="row justify-content-md-center" id="user_edit_form_container">
+  <div class="col-md-6">
+    <h2 class="text-center join-message">Edit Profile</h2>
+    <form method="POST" id="user_edit_form">
       {{ form.hidden_tag() }}
 
       {% for field in form if field.widget.input_type != 'hidden' and field.name != 'password' and field.name != 'private' %}
       {% for error in field.errors %}
       <span class="text-danger">{{ error }}</span>
       {% endfor %}
+      <label class="font-weight-bold">{{field.label.text}}</label>
       {{ field(placeholder=field.label.text, class="form-control") }}
       {% endfor %}
 
-   
+      <div class="form-group">
+        <div class="custom-control custom-switch">
+          {% if form.private.errors %}
+          {% for error in form.private.errors %}
+          <span class="text-danger">
+            {{ error }}
+          </span>
+          {% endfor %}
+          {% endif %}
+          {{ form.private(class="custom-control-input", id="private") }}
+          <label class="custom-control-label font-weight-bold" for="private">Private Account</label>
+        </div>
+      </div>
+      <hr class="my-4"/>
 
-      <span>Private Account:</span>
-      {% if form.private.errors %}
-      {% for error in form.private.errors %}
-      <span class="text-danger">
-        {{ error }}
-      </span>
-      {% endfor %}
-      {% endif %}
-      {{ form.private(class="form-control") }}
-   
-      
 
-      <p>To confirm changes, enter your password:</p>
+      <label class="font-weight-bolder">To confirm changes, enter your password:</label>
       {% if form.password.errors %}
       {% for error in form.password.errors %}
       <span class="text-danger">
@@ -40,7 +43,7 @@
       {{ form.password(placeholder="Enter your password to confirm", class="form-control") }}
 
       <div class="edit-btn-area">
-        <button class="btn btn-success">Edit this user!</button>
+        <button class="btn btn-success">Save</button>
         <a href="/users/{{ user_id }}" class="btn btn-outline-secondary">Cancel</a>
       </div>
     </form>
